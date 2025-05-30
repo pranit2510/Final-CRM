@@ -1,0 +1,623 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// User Management
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  phone     String?  @unique
+  firstName String
+  lastName  String
+  avatar    String?
+  role      UserRole @default(USER)
+  status    UserStatus @default(ACTIVE)
+  
+  // Auth
+  emailVerified DateTime?
+  phoneVerified DateTime?
+  
+  // Company association
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  assignedLeads Lead[]
+  createdQuotes Quote[]
+  assignedJobs  Job[]
+  createdInvoices Invoice[]
+  activities    Activity[]
+  sessions      Session[]
+  timeEntries   TimeEntry[]
+  
+  @@map("users")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("sessions")
+}
+
+// Company & Contacts
+model Company {
+  id          String      @id @default(cuid())
+  name        String
+  industry    Industry?
+  size        CompanySize?
+  website     String?
+  description String?
+  status      CompanyStatus @default(ACTIVE)
+  
+  // Address
+  address     String?
+  city        String?
+  state       String?
+  zip         String?
+  country     String?     @default("US")
+  
+  // Coordinates for mapping
+  latitude    Float?
+  longitude   Float?
+  
+  // Timestamps
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Relations
+  contacts    Contact[]
+  leads       Lead[]
+  quotes      Quote[]
+  jobs        Job[]
+  invoices    Invoice[]
+  users       User[]
+  
+  @@map("companies")
+}
+
+model Contact {
+  id          String        @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  mobile      String?
+  title       String?
+  department  String?
+  isPrimary   Boolean       @default(false)
+  status      ContactStatus @default(ACTIVE)
+  
+  // Company relation
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  // Relations
+  leads       Lead[]
+  activities  Activity[]
+  
+  @@map("contacts")
+}
+
+// Sales Pipeline
+model Lead {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  value       Float?
+  source      LeadSource
+  status      LeadStatus @default(NEW)
+  priority    Priority   @default(MEDIUM)
+  
+  // Assignment
+  assignedToId String?
+  assignedTo   User?   @relation(fields: [assignedToId], references: [id])
+  
+  // Company & Contact
+  companyId    String?
+  company      Company? @relation(fields: [companyId], references: [id])
+  contactId    String?
+  contact      Contact? @relation(fields: [contactId], references: [id])
+  
+  // Conversion tracking
+  convertedAt  DateTime?
+  quoteId      String?   @unique
+  quote        Quote?    @relation(fields: [quoteId], references: [id])
+  
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  // Relations
+  activities   Activity[]
+  
+  @@map("leads")
+}
+
+// Quotes & Estimates
+model Quote {
+  id            String      @id @default(cuid())
+  quoteNumber   String      @unique
+  title         String
+  description   String?
+  status        QuoteStatus @default(DRAFT)
+  validUntil    DateTime?
+  
+  // Pricing
+  subtotal      Float       @default(0)
+  taxRate       Float       @default(0)
+  taxAmount     Float       @default(0)
+  discountRate  Float       @default(0)
+  discountAmount Float      @default(0)
+  total         Float       @default(0)
+  
+  // Company & Contact
+  companyId     String
+  company       Company     @relation(fields: [companyId], references: [id])
+  
+  // Assignment
+  createdById   String
+  createdBy     User        @relation(fields: [createdById], references: [id])
+  
+  // Job site address
+  jobSiteAddress String?
+  jobSiteCity    String?
+  jobSiteState   String?
+  jobSiteZip     String?
+  jobSiteLatitude Float?
+  jobSiteLongitude Float?
+  
+  // Timestamps
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // Relations
+  lineItems     QuoteLineItem[]
+  lead          Lead?
+  job           Job?
+  activities    Activity[]
+  
+  @@map("quotes")
+}
+
+model QuoteLineItem {
+  id          String @id @default(cuid())
+  quoteId     String
+  quote       Quote  @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  
+  // Item details
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+  itemType    LineItemType @default(LABOR)
+  
+  // Inventory relation (optional)
+  inventoryItemId String?
+  inventoryItem   InventoryItem? @relation(fields: [inventoryItemId], references: [id])
+  
+  // Ordering
+  sortOrder   Int    @default(0)
+  
+  @@map("quote_line_items")
+}
+
+// Jobs & Work Orders
+model Job {
+  id              String    @id @default(cuid())
+  jobNumber       String    @unique
+  title           String
+  description     String?
+  status          JobStatus @default(SCHEDULED)
+  priority        Priority  @default(MEDIUM)
+  
+  // Scheduling
+  scheduledStart  DateTime?
+  scheduledEnd    DateTime?
+  actualStart     DateTime?
+  actualEnd       DateTime?
+  
+  // Company relation
+  companyId       String
+  company         Company   @relation(fields: [companyId], references: [id])
+  
+  // Quote relation
+  quoteId         String?   @unique
+  quote           Quote?    @relation(fields: [quoteId], references: [id])
+  
+  // Assignment
+  assignedToId    String?
+  assignedTo      User?     @relation(fields: [assignedToId], references: [id])
+  
+  // Job site details
+  jobSiteAddress  String?
+  jobSiteCity     String?
+  jobSiteState    String?
+  jobSiteZip      String?
+  jobSiteLatitude Float?
+  jobSiteLongitude Float?
+  
+  // Pricing
+  estimatedHours  Float?
+  actualHours     Float?
+  laborRate       Float?
+  
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  timeEntries     TimeEntry[]
+  expenses        Expense[]
+  activities      Activity[]
+  invoices        Invoice[]
+  
+  @@map("jobs")
+}
+
+model TimeEntry {
+  id          String   @id @default(cuid())
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id])
+  
+  // Time tracking
+  startTime   DateTime
+  endTime     DateTime?
+  totalHours  Float?
+  description String?
+  
+  // User tracking
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("time_entries")
+}
+
+model Expense {
+  id          String      @id @default(cuid())
+  jobId       String
+  job         Job         @relation(fields: [jobId], references: [id])
+  
+  // Expense details
+  description String
+  amount      Float
+  category    ExpenseCategory
+  receiptUrl  String?
+  
+  // Timestamps
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  @@map("expenses")
+}
+
+// Invoicing & Payments
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  status        InvoiceStatus @default(DRAFT)
+  
+  // Company relation
+  companyId     String
+  company       Company       @relation(fields: [companyId], references: [id])
+  
+  // Job relation (optional)
+  jobId         String?
+  job           Job?          @relation(fields: [jobId], references: [id])
+  
+  // Created by
+  createdById   String
+  createdBy     User          @relation(fields: [createdById], references: [id])
+  
+  // Pricing
+  subtotal      Float         @default(0)
+  taxRate       Float         @default(0)
+  taxAmount     Float         @default(0)
+  total         Float         @default(0)
+  amountPaid    Float         @default(0)
+  balanceDue    Float         @default(0)
+  
+  // Terms
+  terms         String?
+  notes         String?
+  dueDate       DateTime?
+  
+  // Timestamps
+  issuedAt      DateTime?
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relations
+  lineItems     InvoiceLineItem[]
+  payments      Payment[]
+  activities    Activity[]
+  
+  @@map("invoices")
+}
+
+model InvoiceLineItem {
+  id          String @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  
+  // Item details
+  description String
+  quantity    Float
+  unitPrice   Float
+  total       Float
+  
+  // Ordering
+  sortOrder   Int    @default(0)
+  
+  @@map("invoice_line_items")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  invoiceId     String
+  invoice       Invoice       @relation(fields: [invoiceId], references: [id])
+  
+  // Payment details
+  amount        Float
+  method        PaymentMethod
+  reference     String?
+  notes         String?
+  
+  // Stripe integration
+  stripePaymentId String?
+  
+  // Timestamps
+  paidAt        DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  
+  @@map("payments")
+}
+
+// Inventory & Materials
+model InventoryItem {
+  id            String            @id @default(cuid())
+  sku           String            @unique
+  name          String
+  description   String?
+  category      String?
+  unit          String            @default("each")
+  
+  // Pricing
+  costPrice     Float?
+  sellPrice     Float?
+  
+  // Stock
+  currentStock  Int               @default(0)
+  minStock      Int               @default(0)
+  maxStock      Int?
+  
+  // Status
+  isActive      Boolean           @default(true)
+  
+  // Timestamps
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  
+  // Relations
+  quoteLineItems QuoteLineItem[]
+  stockMovements StockMovement[]
+  
+  @@map("inventory_items")
+}
+
+model StockMovement {
+  id              String        @id @default(cuid())
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  
+  // Movement details
+  type            MovementType
+  quantity        Int
+  reference       String?
+  notes           String?
+  
+  // Cost tracking
+  unitCost        Float?
+  totalCost       Float?
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  
+  @@map("stock_movements")
+}
+
+// Activity Tracking
+model Activity {
+  id          String       @id @default(cuid())
+  type        ActivityType
+  title       String
+  description String?
+  
+  // User who performed the activity
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  
+  // Related entities (polymorphic)
+  leadId      String?
+  lead        Lead?        @relation(fields: [leadId], references: [id])
+  contactId   String?
+  contact     Contact?     @relation(fields: [contactId], references: [id])
+  quoteId     String?
+  quote       Quote?       @relation(fields: [quoteId], references: [id])
+  jobId       String?
+  job         Job?         @relation(fields: [jobId], references: [id])
+  invoiceId   String?
+  invoice     Invoice?     @relation(fields: [invoiceId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime     @default(now())
+  
+  @@map("activities")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+  VIEWER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum Industry {
+  CONSTRUCTION
+  PLUMBING
+  ELECTRICAL
+  HVAC
+  LANDSCAPING
+  ROOFING
+  PAINTING
+  FLOORING
+  OTHER
+}
+
+enum CompanySize {
+  SOLO
+  SMALL        // 2-10
+  MEDIUM       // 11-50
+  LARGE        // 51+
+}
+
+enum CompanyStatus {
+  ACTIVE
+  INACTIVE
+  PROSPECT
+}
+
+enum ContactStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum LeadSource {
+  WEBSITE
+  REFERRAL
+  GOOGLE_ADS
+  FACEBOOK_ADS
+  COLD_CALL
+  EMAIL
+  TRADE_SHOW
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  NEGOTIATION
+  WON
+  LOST
+  CANCELLED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum LineItemType {
+  LABOR
+  MATERIAL
+  EQUIPMENT
+  OTHER
+}
+
+enum JobStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  CREDIT_CARD
+  BANK_TRANSFER
+  OTHER
+}
+
+enum MovementType {
+  PURCHASE
+  SALE
+  ADJUSTMENT
+  RETURN
+}
+
+enum ExpenseCategory {
+  MATERIALS
+  FUEL
+  EQUIPMENT
+  PERMITS
+  SUBCONTRACTOR
+  OTHER
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+  TASK
+  STATUS_CHANGE
+  QUOTE_SENT
+  INVOICE_SENT
+  PAYMENT_RECEIVED
+} 
