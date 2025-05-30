@@ -122,63 +122,69 @@ body {
   overflow-x: hidden;
 }
 
-/* Enhanced Component Classes */
+/* Glass Effects */
 .glass-card {
-  @apply backdrop-blur-xl rounded-2xl;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-card);
-  transition: all var(--duration-normal) var(--ease-in-out);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease-in-out;
 }
 
 .glass-card:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-hover);
-  box-shadow: var(--shadow-hover);
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transform: translateY(-2px);
 }
 
 .glass-card:active {
-  background: var(--color-surface-active);
-  box-shadow: var(--shadow-active);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   transform: translateY(0);
 }
 
 .glass-header {
-  @apply rounded-none border-b-0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(229, 231, 235, 0.5);
   backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
 }
 
 .glass-button {
-  @apply px-6 py-3 font-medium;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  color: var(--color-primary);
-  transition: all var(--duration-fast) var(--ease-in-out);
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  color: #2563eb;
+  transition: all 0.2s ease-in-out;
 }
 
 .glass-button:hover {
-  color: var(--color-primary-dark);
+  color: #1d4ed8;
   transform: translateY(-1px) scale(1.02);
 }
 
 .glass-input {
-  @apply px-4 py-3 text-gray-900 placeholder-gray-500;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.375rem;
   backdrop-filter: blur(10px);
 }
 
+.glass-input::placeholder {
+  color: #6b7280;
+}
+
 .glass-input:focus {
-  @apply ring-2 ring-opacity-50 outline-none;
-  ring-color: var(--color-primary);
-  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  border-color: #2563eb;
 }
 
 /* Invisible Spacer */
@@ -374,8 +380,13 @@ body {
 
 /* Focus States */
 .focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-opacity-50;
-  --tw-ring-color: var(--color-primary);
+  outline: none;
+  ring: 2px solid rgba(37, 99, 235, 0.5);
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 /* Smooth Transitions */
@@ -408,11 +419,12 @@ body {
 /* Enhanced Mobile Optimizations */
 @media (max-width: 768px) {
   .glass-card {
-    @apply rounded-xl;
+    border-radius: 0.75rem;
   }
   
   .glass-button {
-    @apply px-4 py-2 text-sm;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
   }
   
   .text-hero {
@@ -439,7 +451,8 @@ body {
 /* Print Styles */
 @media print {
   .glass-card {
-    @apply bg-white border border-gray-300;
+    background: white;
+    border: 1px solid #d1d5db;
     box-shadow: none;
     backdrop-filter: none;
   }
