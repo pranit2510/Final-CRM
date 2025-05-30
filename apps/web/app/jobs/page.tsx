@@ -1,21 +1,24 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Calendar, 
-  Plus,
-  Search,
-  Filter,
+  CheckCircle, 
+  Clock, 
+  DollarSign, 
+  Filter, 
+  MapPin, 
+  Plus, 
+  Search, 
+  TrendingUp, 
   Users,
-  MapPin,
-  Clock,
-  DollarSign,
-  CheckCircle,
-  Play,
-  Pause,
   AlertTriangle,
-  TrendingUp
+  CalendarDays,
+  Pause,
+  Play
 } from 'lucide-react'
+import CalendarModal from '../../components/calendar-modal'
 
 export default function JobsPage() {
   const containerVariants = {
@@ -148,6 +151,8 @@ export default function JobsPage() {
     { title: 'Revenue', value: `$${(totalRevenue / 1000).toFixed(0)}K`, change: '+18%', icon: DollarSign, bgColor: 'from-emerald-400 to-emerald-600' },
   ]
 
+  const [showCalendarModal, setShowCalendarModal] = useState(false)
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Floating Background Elements */}
@@ -192,14 +197,25 @@ export default function JobsPage() {
               <h1 className="text-3xl font-bold text-gradient mb-2">Jobs & Schedule</h1>
               <p className="text-gray-600">Manage your construction jobs, teams, and schedules</p>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary mt-4 md:mt-0"
-            >
-              <Plus className="h-5 w-5" />
-              Schedule New Job
-            </motion.button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4 md:mt-0">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowCalendarModal(true)}
+                className="btn-primary bg-white text-indigo-600 border-2 border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 shadow-sm transition-all duration-200"
+              >
+                <CalendarDays className="h-5 w-5" />
+                Calendar View
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn-primary bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-transparent hover:from-indigo-600 hover:to-purple-700 shadow-lg"
+              >
+                <Plus className="h-5 w-5" />
+                Schedule New Job
+              </motion.button>
+            </div>
           </div>
         </motion.div>
 
@@ -395,6 +411,13 @@ export default function JobsPage() {
           ))}
         </motion.div>
       </div>
+
+      {showCalendarModal && (
+        <CalendarModal
+          isOpen={showCalendarModal}
+          onClose={() => setShowCalendarModal(false)}
+        />
+      )}
     </div>
   )
 } 
