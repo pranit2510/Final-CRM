@@ -13,13 +13,5 @@ export function ConditionalNavigation() {
     return null
   }
   
-  return (
-    <>
-      <Navigation />
-      {/* Desktop spacer for floating navigation */}
-      <div className="hidden md:block h-24 invisible-spacer" />
-      {/* Mobile bottom spacer for mobile navigation */}
-      <div className="md:hidden h-20 invisible-spacer" />
-    </>
-  )
+  return <Navigation />
 } 

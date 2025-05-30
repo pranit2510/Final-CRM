@@ -38,7 +38,7 @@ export function Navigation() {
         className="hidden md:block fixed top-4 left-4 right-4 z-sticky"
       >
         <motion.header 
-          className="glass-header rounded-2xl border border-border-glass shadow-2xl max-w-7xl mx-auto"
+          className="glass-header rounded-3xl border border-border-glass shadow-2xl max-w-7xl mx-auto overflow-hidden"
           whileHover={{ y: -1 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
         >
@@ -77,7 +77,7 @@ export function Navigation() {
                     >
                       <Link
                         href={item.href}
-                        className={`relative px-4 py-2 rounded-xl font-medium text-sm transition-all duration-200 flex items-center space-x-2 ${
+                        className={`relative px-4 py-2 rounded-2xl font-medium text-sm transition-all duration-200 flex items-center space-x-2 ${
                           isActive
                             ? 'bg-brand-primary text-white shadow-glow'
                             : 'text-gray-700 hover:bg-brand-primary/10 hover:text-brand-primary'
@@ -88,7 +88,7 @@ export function Navigation() {
                         {isActive && (
                           <motion.div
                             layoutId="activeTab"
-                            className="absolute inset-0 bg-brand-primary rounded-xl -z-10"
+                            className="absolute inset-0 bg-brand-primary rounded-2xl -z-10"
                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
                           />
                         )}
@@ -109,7 +109,7 @@ export function Navigation() {
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="glass-input pl-10 pr-4 py-2 w-48 text-sm focus-ring rounded-xl"
+                    className="glass-input pl-10 pr-4 py-2 w-48 text-sm focus-ring rounded-2xl"
                   />
                 </motion.div>
                 
@@ -117,7 +117,7 @@ export function Navigation() {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="relative glass-button p-2 hover-glow rounded-full"
+                  className="relative glass-button p-2 hover-glow rounded-2xl"
                 >
                   <Bell className="h-5 w-5 text-brand-primary" />
                   <span className="absolute -top-1 -right-1 bg-brand-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce-subtle">
@@ -129,7 +129,7 @@ export function Navigation() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="glass-button p-2 hover-lift rounded-full"
+                  className="glass-button p-2 hover-lift rounded-2xl"
                 >
                   <User className="h-5 w-5 text-brand-primary" />
                 </motion.button>
@@ -146,7 +146,7 @@ export function Navigation() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <div className="glass-header rounded-2xl border border-border-glass shadow-2xl p-3">
+        <div className="glass-header rounded-3xl border border-border-glass shadow-2xl p-3 overflow-hidden">
           <div className="grid grid-cols-6 gap-1">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href
@@ -158,7 +158,7 @@ export function Navigation() {
                 >
                   <Link
                     href={item.href}
-                    className={`flex flex-col items-center p-2 rounded-lg text-xs font-medium transition-all ${
+                    className={`flex flex-col items-center p-2 rounded-2xl text-xs font-medium transition-all ${
                       isActive
                         ? 'bg-brand-primary text-white shadow-glow'
                         : 'text-gray-600 hover:bg-brand-primary/10 hover:text-brand-primary'

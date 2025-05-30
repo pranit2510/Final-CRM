@@ -173,7 +173,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-base">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 md:pt-28 md:pb-24 relative z-base">
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
