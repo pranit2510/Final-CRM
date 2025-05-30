@@ -10,7 +10,7 @@ export default function RegisterPage() {
           <div className="flex justify-center">
             <div className="flex items-center">
               <Hammer className="h-10 w-10 text-primary mr-3" />
-              <h1 className="text-3xl font-bold text-gray-900">BlueCollarCRM</h1>
+              <h1 className="text-3xl font-bold text-gradient">BlueCollarCRM</h1>
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

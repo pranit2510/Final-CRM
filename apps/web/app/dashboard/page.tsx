@@ -17,11 +17,14 @@ import {
   Zap,
   CheckCircle2,
   AlertTriangle,
-  Settings
+  Settings,
+  PhoneCall
 } from 'lucide-react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
+import AddLeadModal from '../../components/add-lead-modal'
+import Toast from '../../components/toast'
 
 // Animation variants
 const containerVariants = {
@@ -69,12 +72,20 @@ const statVariants = {
 export default function DashboardPage() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [isVisible, setIsVisible] = useState(false)
+  const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false)
+  const [showToast, setShowToast] = useState(false)
 
   useEffect(() => {
     setIsVisible(true)
     const timer = setInterval(() => setCurrentTime(new Date()), 1000)
     return () => clearInterval(timer)
   }, [])
+
+  const handleAddLead = (lead: any) => {
+    // Handle the lead submission - you can add logic here to save to database
+    console.log('New lead added:', lead)
+    setShowToast(true)
+  }
 
   const stats = [
     {
@@ -205,12 +216,13 @@ export default function DashboardPage() {
                 </div>
               </div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/leads">
-                  <Button className="gradient-primary hover-glow shadow-glow">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Lead
-                  </Button>
-                </Link>
+                <button 
+                  className="btn-primary"
+                  onClick={() => setIsAddLeadModalOpen(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Lead
+                </button>
               </motion.div>
             </motion.div>
           </div>
@@ -395,6 +407,19 @@ export default function DashboardPage() {
           ))}
         </motion.div>
       </main>
+
+      <AddLeadModal
+        isOpen={isAddLeadModalOpen}
+        onClose={() => setIsAddLeadModalOpen(false)}
+        onSubmit={handleAddLead}
+      />
+      
+      <Toast
+        message="Lead added successfully!"
+        isVisible={showToast}
+        onClose={() => setShowToast(false)}
+        type="success"
+      />
     </div>
   )
 } 

@@ -199,9 +199,9 @@ export default function InventoryPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="glass-button px-6 py-3 bg-brand-primary text-white font-medium rounded-xl hover-glow"
+                className="btn-primary"
               >
-                <Plus className="h-5 w-5 mr-2" />
+                <Plus className="h-5 w-5" />
                 Add Item
               </motion.button>
             </div>

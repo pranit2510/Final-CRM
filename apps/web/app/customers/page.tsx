@@ -162,11 +162,8 @@ export default function CustomersPage() {
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-                <UserCheck className="h-8 w-8 text-blue-600 mr-3" />
-                Customers
-              </h1>
-              <p className="mt-2 text-gray-600">
+              <h1 className="text-3xl font-bold text-gradient mb-2">Customer Management</h1>
+              <p className="text-gray-600">
                 Manage your customer relationships and track their journey
               </p>
             </div>
@@ -182,9 +179,9 @@ export default function CustomersPage() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center"
+                className="btn-primary"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4" />
                 Add Customer
               </motion.button>
             </div>

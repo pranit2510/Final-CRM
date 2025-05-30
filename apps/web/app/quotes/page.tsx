@@ -177,9 +177,9 @@ export default function QuotesPage() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="glass-button px-6 py-3 bg-brand-primary text-white font-medium rounded-xl hover-glow mt-4 md:mt-0"
+              className="btn-primary mt-4 md:mt-0"
             >
-              <Plus className="h-5 w-5 mr-2" />
+              <Plus className="h-5 w-5" />
               Create Quote
             </motion.button>
           </div>
