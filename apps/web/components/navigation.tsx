@@ -16,7 +16,8 @@ import {
   User,
   Hammer,
   Menu,
-  X
+  X,
+  Bot
 } from 'lucide-react'
 
 const navigationItems = [
@@ -25,6 +26,7 @@ const navigationItems = [
   { name: 'Customers', href: '/customers', icon: UserCheck },
   { name: 'Quotes', href: '/quotes', icon: FileText },
   { name: 'Jobs', href: '/jobs', icon: Calendar },
+  { name: 'AI Power', href: '/ai-power', icon: Bot },
   { name: 'Inventory', href: '/inventory', icon: Package },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
 ]
